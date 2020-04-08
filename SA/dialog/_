@@ -1,0 +1,72 @@
+if [ ! -d $HOME/.sa_dia ]; then
+	mkdir $HOME/.sa_dia
+	curl 'https://timetable.nctu.edu.tw/?r=main/get_cos_list' --data 'm_acy=107&m_sem=1&m_degree=3&m_dep_id=17&m_group=**&m_grade=**&m_class=**&m_option=**&m_crsname=**&m_teaname=**&m_cos_id=**&m_cos_code=**&m_crstime=**&m_crsoutline=**&m_costype=**' | tr '{' '\n' | tr '}' '\n' | tr ',' '\n' | grep cos_ename | awk -F ":" '{print NR, $2}' | sed -e 's/"//g' > $HOME/.sa_dia/cos_ename.txt
+
+	cat $HOME/.sa_dia/cos_ename.txt | tr '\\r' ' ' > $HOME/.sa_dia/new_ename.txt
+	
+	curl 'https://timetable.nctu.edu.tw/?r=main/get_cos_list' --data 'm_acy=107&m_sem=1&m_degree=3&m_dep_id=17&m_group=**&m_grade=**&m_class=**&m_option=**&m_crsname=**&m_teaname=**&m_cos_id=**&m_cos_code=**&m_crstime=**&m_crsoutline=**&m_costype=**' | tr '{' '\n' | tr '}' '\n' | tr ',' '\n' | tr '-' ' ' | grep cos_time | sed -e 's/"//g' | tr ':' ' ' | awk  '{print NR, $2}' > $HOME/.sa_dia/cos_time.txt
+#   # if the dir is not exist and then curl two files 
+# and store tow txt	
+	
+
+	curl 'https://timetable.nctu.edu.tw/?r=main/get_cos_list' --data 'm_acy=107&m_sem=1&m_degree=3&m_dep_id=17&m_group=**&m_grade=**&m_class=**&m_option=**&m_crsname=**&m_teaname=**&m_cos_id=**&m_cos_code=**&m_crstime=**&m_crsoutline=**&m_costype=**' | tr '{' '\n' | tr '}' '\n' | tr ',' '\n' | tr '-' ' '  | grep cos_time | sed -e 's/"//g' | tr ':' ' ' | awk  '{print  $2}' > $HOME/.sa_dia/new_time.txt	
+
+
+echo "nono"
+fi
+welcome()
+{
+	dialog --ascii-lines --ok-label 'it time to play' --title 'it is not funny' --no-collapse --cr-wrap --msgbox '
+/ ___|  / \  / ___|  / \  / ___|  / \
+\___ \ / _ \ \___ \ / _ \ \___ \ / _ \
+ ___) / ___ \ ___) / ___ \ ___) / ___ \
+|____/_/   \_\____/_/   \_\____/_/   \_\
+
+
+
+thanks fliget
+
+' 16 50
+cblock
+}
+cblock()
+{
+	i=1;
+	j=1;
+	k=1;
+	exec 3>&1
+	num=0;
+	arr=()
+	tarr=()
+	aarr=()
+	while read inputfile; do
+		arr+=($i "$inputfile")
+		i=$(($i+1))
+	done < $HOME/.sa_dia/cos_ename.txt
+
+	while read inputfile; do
+		tarr+=($j "$inputfile")
+		j=$(($j+1))
+	done < $HOME/.sa_dia/cos_time.txt
+
+
+	while read inputfile; do
+		aarr+=($k "$inputfile")
+		k=$(($k+1))
+	done < $HOME/.sa_dia/sall.txt	
+################################################### sall.txt need to implement in this code remember!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	cnum=$(dialog --ascii-lines --clear --title "class you can choose!!" --no-tags --menu "choose a course" 20 50 30  "${aarr[@]}" --output-fd 1);
+	
+	i=$(($cnum+1))
+	i=$(($i/2))
+echo $i
+
+exec 3>&-
+
+
+}
+
+
+
+
+welcome
